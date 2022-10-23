@@ -2,11 +2,6 @@
 import { ref, onMounted } from 'vue'
 import JsonTree from 'vue-json-tree'
 
-
-defineProps({
-  msg: String
-})
-
 const count = ref(0)
 const headerUrl = ref(window.location.origin + '/sharedmemory/header')
 const eventsUrl = ref(window.location.origin + '/sharedmemory/events')
@@ -61,8 +56,8 @@ onMounted(() => {
 <template lang="pug">
 div
   h2 Header
-  json-tree(:raw="header")
-  h2 Log
+  json-tree(:raw="header", level=1)
+  h2 Events
   json-tree(:raw="events")
 </template>
 
