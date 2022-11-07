@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, markRaw, onMounted, computed } from 'vue'
 import JsonTree from 'vue-json-tree'
 import EventItem from './EventItem.vue'
 import VirtualList from 'vue3-virtual-scroll-list';
@@ -9,11 +9,10 @@ const headerUrl = ref(import.meta.env.PROD? (window.location.origin + '/sharedme
 const eventsUrl = ref(import.meta.env.PROD? (window.location.origin + '/sharedmemory/header') : 'http://localhost:8040/sharedmemory/events')
 const varsUrl = ref(import.meta.env.PROD? (window.location.origin + '/sharedmemory/header') : 'http://localhost:8040/sharedmemory/vars')
 const header = ref(null)
-const events = ref(null)
-const revents = computed(()=> events.value==null? [] : JSON.parse(events.value))
+const events = ref([])
 const vars = ref(null)
 const connectionError = ref(null)
-const item = ref(EventItem)
+const item = markRaw(EventItem)
 
 
 function fetchHeaderData() {
@@ -40,7 +39,8 @@ function fetchEventsData() {
     } }).then(response => {      
       response.json().then(
         data => { 
-          events.value = JSON.stringify(data)
+          data.map((event, index) => event.Index = index+1) 
+          events.value = data         
         }
       );      
     }).catch(error => {
@@ -74,12 +74,12 @@ onMounted(() => {
 
 <template lang="pug">
 div
+  h2 Header
+  json-tree(:raw="header", :level='0')
   h2 Vars
   json-tree(:raw="vars")
-  h2 Header
-  json-tree(:raw="header", :level='1')
   h2 Events
-  virtual-list(:data-key="'Created'", :data-sources="revents", :data-component="item")    
+  virtual-list(:data-key="'Index'", :data-sources="events", :data-component="item", style="height: 500px; overflow-y: auto;")    
 </template>
 
 <style scoped>

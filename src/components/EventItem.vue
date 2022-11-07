@@ -1,5 +1,4 @@
 <script setup>
-import { ref, onMounted } from 'vue'
 
 const props = defineProps(
   { source: {}
@@ -9,7 +8,9 @@ const props = defineProps(
 </script>
 
 <template lang="pug">
-span {{source.Created}} {{source.Value}}
+div
+  span {{source.Index}}: {{source.Created}} {{source.Value}}
+  hr
 </template>
 
 <style scoped>
