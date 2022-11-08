@@ -7,10 +7,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "clipboard": "^2.0.11",
     "pug": "^3.0.2",
     "pug-loader": "^2.4.0",
     "vue": "^3.2.25",
     "vue-json-tree": "^0.4.3",
+    "vue3-json-viewer": "^2.2.2",
     "vue3-virtual-scroll-list": "^0.2.1"
   },
   "devDependencies": {

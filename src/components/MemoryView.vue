@@ -3,6 +3,7 @@ import { ref, markRaw, onMounted, computed } from 'vue'
 import JsonTree from 'vue-json-tree'
 import EventItem from './EventItem.vue'
 import VirtualList from 'vue3-virtual-scroll-list';
+import {JsonViewer} from "vue3-json-viewer"
 
 const count = ref(0)
 const headerUrl = ref(import.meta.env.PROD? (window.location.origin + '/sharedmemory/header') : 'http://localhost:8040/sharedmemory/header')
@@ -67,7 +68,7 @@ function fetchVarsData() {
     } }).then(response => {      
       response.json().then(
         data => { 
-          vars.value = JSON.stringify(data)
+          vars.value = data
         }
       );      
     }).catch(error => {
@@ -88,8 +89,9 @@ div.body
   h3 Header
   json-tree(:raw="header", :level='0')
   h2 Vars
-  json-tree(:raw="vars")
+  JsonViewer(:value="vars", copyable boxed)
   h2 Events
+  hr
   virtual-list(:data-key="'Index'", :data-sources="events", :data-component="item", style="height: 500px; overflow-y: auto;")    
 </template>
 
