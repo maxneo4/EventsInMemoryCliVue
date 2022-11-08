@@ -8,12 +8,19 @@ const count = ref(0)
 const headerUrl = ref(import.meta.env.PROD? (window.location.origin + '/sharedmemory/header') : 'http://localhost:8040/sharedmemory/header')
 const eventsUrl = ref(import.meta.env.PROD? (window.location.origin + '/sharedmemory/header') : 'http://localhost:8040/sharedmemory/events')
 const varsUrl = ref(import.meta.env.PROD? (window.location.origin + '/sharedmemory/header') : 'http://localhost:8040/sharedmemory/vars')
-const header = ref(null)
+const header = ref("{}")
 const events = ref([])
-const vars = ref(null)
+const vars = ref("{}")
 const connectionError = ref(null)
 const item = markRaw(EventItem)
 
+const optionsDateFormat = {
+  hour: 'numeric',
+  minute: 'numeric',
+  second: 'numeric',
+  month: 'short',
+  day: 'numeric',
+};
 
 function fetchHeaderData() {
   connectionError.value = undefined;
@@ -23,6 +30,7 @@ function fetchHeaderData() {
     } }).then(response => {      
       response.json().then(
         data => { 
+          data.Behaviour.WorkingSince = new Date(data.Behaviour.WorkingSince.toString()).toLocaleString()          
           header.value = JSON.stringify(data)
         }
       );      
@@ -39,7 +47,10 @@ function fetchEventsData() {
     } }).then(response => {      
       response.json().then(
         data => { 
-          data.map((event, index) => event.Index = index+1) 
+          data.map((event, index) => {
+             event.Index = index+1;
+             event.Created = new Date(event.Created.toString()).toLocaleString('en-US', optionsDateFormat);
+           }) 
           events.value = data         
         }
       );      
@@ -74,7 +85,7 @@ onMounted(() => {
 
 <template lang="pug">
 div
-  h2 Header
+  h3 Header
   json-tree(:raw="header", :level='0')
   h2 Vars
   json-tree(:raw="vars")
