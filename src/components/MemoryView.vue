@@ -7,8 +7,8 @@ import {JsonViewer} from "vue3-json-viewer"
 
 const count = ref(0)
 const headerUrl = ref(import.meta.env.PROD? (window.location.origin + '/sharedmemory/header') : 'http://localhost:8040/sharedmemory/header')
-const eventsUrl = ref(import.meta.env.PROD? (window.location.origin + '/sharedmemory/header') : 'http://localhost:8040/sharedmemory/events')
-const varsUrl = ref(import.meta.env.PROD? (window.location.origin + '/sharedmemory/header') : 'http://localhost:8040/sharedmemory/vars')
+const eventsUrl = ref(import.meta.env.PROD? (window.location.origin + '/sharedmemory/events') : 'http://localhost:8040/sharedmemory/events')
+const varsUrl = ref(import.meta.env.PROD? (window.location.origin + '/sharedmemory/vars') : 'http://localhost:8040/sharedmemory/vars')
 const header = ref("{}")
 const events = ref([])
 const vars = ref("{}")
@@ -32,7 +32,8 @@ function fetchHeaderData() {
     } }).then(response => {      
       response.json().then(
         data => { 
-          data.Behaviour.WorkingSince = new Date(data.Behaviour.WorkingSince.toString()).toLocaleString()
+          if ( data.Behaviour !== undefined )
+            { data.Behaviour.WorkingSince = new Date(data.Behaviour.WorkingSince.toString()).toLocaleString() }
           diffEvents.new = data.Behaviour.CountRegisteredEvents          
           header.value = JSON.stringify(data)
         }
