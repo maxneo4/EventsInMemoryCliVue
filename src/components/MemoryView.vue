@@ -1,5 +1,5 @@
 <script setup>
-import { ref, markRaw, onMounted, computed } from 'vue'
+import { ref, reactive, markRaw, onMounted, computed } from 'vue'
 import JsonTree from 'vue-json-tree'
 import EventItem from './EventItem.vue'
 import VirtualList from 'vue3-virtual-scroll-list';
@@ -12,6 +12,7 @@ const varsUrl = ref(import.meta.env.PROD? (window.location.origin + '/sharedmemo
 const header = ref("{}")
 const events = ref([])
 const vars = ref("{}")
+const diffEvents = reactive({ current: 0, new: 0})
 const connectionError = ref(null)
 const item = markRaw(EventItem)
 
@@ -31,7 +32,8 @@ function fetchHeaderData() {
     } }).then(response => {      
       response.json().then(
         data => { 
-          data.Behaviour.WorkingSince = new Date(data.Behaviour.WorkingSince.toString()).toLocaleString()          
+          data.Behaviour.WorkingSince = new Date(data.Behaviour.WorkingSince.toString()).toLocaleString()
+          diffEvents.new = data.Behaviour.CountRegisteredEvents          
           header.value = JSON.stringify(data)
         }
       );      
@@ -80,6 +82,15 @@ onMounted(() => {
       fetchHeaderData();
       fetchEventsData();
       fetchVarsData();
+      setInterval(function(){ 
+        fetchHeaderData();
+        if(diffEvents.new != diffEvents.current)
+        { 
+          fetchEventsData(); 
+          diffEvents.current = diffEvents.new
+        }
+        fetchVarsData();
+      }, 5000);
     });
 
 </script>
