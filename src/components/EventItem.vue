@@ -9,10 +9,26 @@ const props = defineProps(
 
 <template lang="pug">
 div
-  span {{source.Index}}: {{source.Created}} {{source.Value}}
+  span.index {{source.Index}}: {{source.Created}}
+  br
+  span.category {{source.Category + " "}} 
+  span.source {{source.Source}} 
+  br
+  span {{source.Value}}
   hr
 </template>
 
 <style scoped>
-
+  .index {
+    font-weight: lighter;
+    font-size: smaller;
+  }
+  .category {
+    font-weight: bold;
+  }
+  
+  .source {
+    font-style: oblique;
+  }
+  
 </style>

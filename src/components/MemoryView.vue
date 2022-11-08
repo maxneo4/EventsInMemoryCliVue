@@ -84,7 +84,7 @@ onMounted(() => {
 </script>
 
 <template lang="pug">
-div
+div.body
   h3 Header
   json-tree(:raw="header", :level='0')
   h2 Vars
@@ -96,5 +96,10 @@ div
 <style scoped>
 a {
   color: #42b983;
+}
+
+.body { 
+  margin-left: 5%;
+  margin-right: 5%;
 }
 </style>
