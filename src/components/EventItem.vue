@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from "Vue";
+import { computed } from "vue";
 import {JsonViewer} from "vue3-json-viewer"
 
 const props = defineProps(

@@ -9,12 +9,14 @@ const count = ref(0)
 const headerUrl = ref(import.meta.env.PROD? (window.location.origin + '/sharedmemory/header') : 'http://localhost:8040/sharedmemory/header')
 const eventsUrl = ref(import.meta.env.PROD? (window.location.origin + '/sharedmemory/events') : 'http://localhost:8040/sharedmemory/events')
 const varsUrl = ref(import.meta.env.PROD? (window.location.origin + '/sharedmemory/vars') : 'http://localhost:8040/sharedmemory/vars')
+const deleteEventsUrl = ref(import.meta.env.PROD? (window.location.origin + '/sharedmemory/delete/events') : 'http://localhost:8040/sharedmemory/delete/events')
 const header = ref("{}")
 const events = ref([])
 const vars = ref("{}")
 const diffEvents = reactive({ current: 0, new: 0})
 const connectionError = ref(null)
 const item = markRaw(EventItem)
+const result = ref("")
 
 const optionsDateFormat = {
   hour: 'numeric',
@@ -79,6 +81,23 @@ function fetchVarsData() {
     });
 }
 
+function clearEvents(){
+  connectionError.value = undefined;
+  console.log(deleteEventsUrl.value)
+  fetch(deleteEventsUrl.value, { method: 'post', headers: {
+      'content-type': 'application/json'
+    } }).then(response => {      
+      response.json().then(
+        data => { 
+          result.value = data
+          fetchEventsData()
+        }
+      );      
+    }).catch(error => {
+      connectionError.value = error;
+    });
+}
+
 onMounted(() => {      
       fetchHeaderData();
       fetchEventsData();
@@ -102,7 +121,8 @@ div.body
   json-tree(:raw="header", :level='0')
   h2 Vars
   JsonViewer(:value="vars", copyable boxed)
-  h2 Events
+  h2 Events  
+  button(type="button" @click="clearEvents()") clear events
   hr
   virtual-list(:data-key="'Index'", :data-sources="events", :data-component="item", style="height: 500px; overflow-y: auto;")    
 </template>

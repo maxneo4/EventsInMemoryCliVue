@@ -6,7 +6,13 @@ export default defineConfig(({command, mode}) =>
 {
   if (command === 'dev'){
   return {
-    plugins: [vue()]
+    plugins: [vue({
+		template: {
+			compilerOptions: {
+				isCustomElement: (tag) => ['virtual-list'].includes(tag)
+			}
+		}
+	})]
   } }
   else return {
     plugins: [vue()]
