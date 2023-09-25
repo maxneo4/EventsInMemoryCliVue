@@ -4,6 +4,7 @@ import JsonTree from 'vue-json-tree'
 import EventItem from './EventItem.vue'
 import VirtualList from 'vue3-virtual-scroll-list';
 import {JsonViewer} from "vue3-json-viewer"
+import JsonEditorVue from 'json-editor-vue'
 
 const count = ref(0)
 const headerUrl = ref(import.meta.env.PROD? (window.location.origin + '/sharedmemory/header') : 'http://localhost:8040/sharedmemory/header')
@@ -17,6 +18,8 @@ const diffEvents = reactive({ current: 0, new: 0})
 const connectionError = ref(null)
 const item = markRaw(EventItem)
 const result = ref("")
+const editorMode = "text"
+const varsInEdition = ref(false)
 
 const optionsDateFormat = {
   hour: 'numeric',
@@ -45,7 +48,7 @@ function fetchHeaderData() {
     });
 }
 
-function fetchEventsData() {
+function fetchEventsData() {  
   connectionError.value = undefined;
   console.log(eventsUrl.value)
   fetch(eventsUrl.value, { method: 'get', headers: {
@@ -66,6 +69,8 @@ function fetchEventsData() {
 }
 
 function fetchVarsData() {
+  if(varsInEdition.value)
+    return;
   connectionError.value = undefined;
   console.log(varsUrl.value)
   fetch(varsUrl.value, { method: 'get', headers: {
@@ -98,6 +103,22 @@ function clearEvents(){
     });
 }
 
+function saveVars(){
+  connectionError.value = undefined;
+  console.log(varsUrl.value)
+  fetch(varsUrl.value, { method: 'post', headers: {
+      'content-type': 'application/json'
+    }, body: vars.value }).then(response => {      
+      response.json().then(
+        data => { 
+          result.value = data
+        }
+      );      
+    }).catch(error => {
+      connectionError.value = error;
+    });
+}
+
 onMounted(() => {      
       fetchHeaderData();
       fetchEventsData();
@@ -110,7 +131,7 @@ onMounted(() => {
           diffEvents.current = diffEvents.new
         }
         fetchVarsData();
-      }, 5000);
+      }, 5000);      
     });
 
 </script>
@@ -120,7 +141,11 @@ div.body
   h3 Header
   json-tree(:raw="header", :level='0')
   h2 Vars
-  JsonViewer(:value="vars", copyable boxed)
+  label edit vars
+  input(type="checkbox" v-model="varsInEdition" name="ss")
+  button(v-if="varsInEdition" type="button" @click="saveVars()") save modified vars
+  hr
+  JsonEditorVue(v-model="vars", v-model:mode="editorMode")
   h2 Events  
   button(type="button" @click="clearEvents()") clear events
   hr
