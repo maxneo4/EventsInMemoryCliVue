@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import {JsonViewer} from "vue3-json-viewer"
+import "vue3-json-viewer/dist/index.css";
 
 const props = defineProps(
   { source: {}

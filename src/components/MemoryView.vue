@@ -112,6 +112,7 @@ function saveVars(){
       response.json().then(
         data => { 
           result.value = data
+          alert(data);
         }
       );      
     }).catch(error => {
